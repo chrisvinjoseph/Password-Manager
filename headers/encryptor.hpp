@@ -22,7 +22,7 @@ class Encryptor {
     public:
         void getFormatInput();
         void encrypt();
-        void store();
+        void store(std::string user, std::string location);
 };
 
 #endif
