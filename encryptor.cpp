@@ -58,15 +58,17 @@ void Encryptor::encrypt() {
     memset_z(&plaintext[0], 0, plaintext.size());
 }
 
-void Encryptor::store() {
-    std::ofstream file;
+// Will store username along with iv-cipher as csv
+void Encryptor::store(std::string user, std::string location) {
+    std::ofstream fout;
 
-    file.open("ooo.txt");
-    HexEncoder encoder(new FileSink(file));
+    fout.open("ciphers.txt");
+    fout << user << "," << location << ",";
+    HexEncoder encoder(new FileSink(fout));
     encoder.Put(*iv, iv->size());
     encoder.Put((const byte*)&cipher[0], cipher.size());
-    file << "\n";
+    fout << "\n";
     encoder.MessageEnd();
 
-    file.close();
+    fout.close();
 }

@@ -6,8 +6,8 @@ int main() {
     Encryptor enc;
     enc.getFormatInput();
     enc.encrypt();
-    enc.store();
-
+    enc.store("test_user", "test_location");
+    
 
     return 0;
 }
