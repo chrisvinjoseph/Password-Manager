@@ -14,10 +14,10 @@
 
 #include "headers/decryptor.hpp"
 
-// Works in symmetry to encryptor. Load -> decrypt -> return plaintext
+// Works in symmetry to encryptor. retrieve -> decrypt -> return plaintext
 
-void Decryptor::loadUsersCiphers(std::string* user, std::vector<std::string>* locations, std::vector<std::string>* ciphers) {
-    std::ifstream fin("test.txt");
+void Decryptor::retrieve(std::string* user, std::vector<std::string>* locations, std::vector<std::string>* ciphers) {
+    std::ifstream fin("ciphers.txt");
     std::string data;
 
     if(fin) {
@@ -36,4 +36,6 @@ void Decryptor::loadUsersCiphers(std::string* user, std::vector<std::string>* lo
     } else {
         std::cout << "File not working." << std::endl;
     }
+
+    fin.close();
 }

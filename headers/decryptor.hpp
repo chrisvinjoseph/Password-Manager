@@ -9,7 +9,7 @@
 
 class Decryptor {
     public:
-        void loadUsersCiphers(std::string* user, std::vector<std::string>* locations, std::vector<std::string>* ciphers);
+        void retrieve(std::string* user, std::vector<std::string>* locations, std::vector<std::string>* ciphers);
 };
 
 #endif

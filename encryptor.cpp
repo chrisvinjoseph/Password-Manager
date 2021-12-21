@@ -62,7 +62,7 @@ void Encryptor::encrypt() {
 void Encryptor::store(std::string user, std::string location) {
     std::ofstream fout;
 
-    fout.open("ciphers.txt");
+    fout.open("ciphers.txt", std::ios_base::app);
     fout << user << "," << location << ",";
     HexEncoder encoder(new FileSink(fout));
     encoder.Put(*iv, iv->size());
