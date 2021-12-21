@@ -8,3 +8,7 @@ Goals right now:
 2. Decryptor
 
 More goals will come as development continues.
+
+Compile:
+g++ driver.cpp encryptor.cpp -lcrypto++
+
