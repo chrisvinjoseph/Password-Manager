@@ -22,6 +22,7 @@ void Encryptor::getFormatInput() {
     std::cout << "Enter text to be encrypted: " << std::endl;
     std::cin >> plaintext;
     keylength = keystr.size();
+    plaintextsize = plaintext.size();
 
     // Keystr resizing
     if(keystr.size() < 16) {
@@ -63,12 +64,16 @@ void Encryptor::store(std::string user, std::string location) {
     std::ofstream fout;
 
     fout.open("ciphers.txt", std::ios_base::app);
-    fout << user << "," << location << ",";
+    fout << user << "," << location << "," << plaintextsize << ",";
     HexEncoder encoder(new FileSink(fout));
     encoder.Put(*iv, iv->size());
+    fout << ",";
     encoder.Put((const byte*)&cipher[0], cipher.size());
     fout << "\n";
     encoder.MessageEnd();
+
+    delete key;
+    delete iv;
 
     fout.close();
 }
