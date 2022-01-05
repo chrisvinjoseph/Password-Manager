@@ -9,7 +9,8 @@
 
 class Decryptor {
     public:
-        void retrieve(std::string* user, std::vector<std::string>* locations, std::vector<std::string>* ciphers);
+        void retrieve(std::string* user, std::vector<std::string>* locations, std::vector<size_t>* plaintextsizes, std::vector<std::string>* IVs, std::vector<std::string>* ciphers);
+        std::string decrypt(std::size_t* plaintextsize, std::string* ivstr, std::string* cipherstr);
 };
 
 #endif

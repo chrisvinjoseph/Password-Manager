@@ -13,10 +13,11 @@
 
 class Encryptor {
     private:
-        int keylength;
-        std::string keystr, plaintext, cipher, recovered;
         CryptoPP::SecByteBlock* key;
         CryptoPP::SecByteBlock* iv;
+        int keylength;
+        size_t plaintextsize;
+        std::string keystr, plaintext, cipher;
         CryptoPP::AutoSeededRandomPool prng;
 
     public:
