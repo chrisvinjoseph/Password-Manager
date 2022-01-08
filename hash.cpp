@@ -8,10 +8,17 @@
 
 using namespace CryptoPP;
 
-
 std::string Hash::hash(std::string* input) {
-    HexEncoder encoder(new FileSink(std::cout))
-    std::string digest;
+    std::string digest, output;
+    HexEncoder encoder(new StringSink(output));
+
+    SHA512 hash;
+    hash.Update((const byte*)input->data(), input->size());
+    digest.resize(hash.DigestSize());
+    hash.Final((byte*)&digest[0]);
+
+    encoder.Put((const byte*)&digest[0], digest.size());
+    encoder.MessageEnd();
 
     return output;
 }
