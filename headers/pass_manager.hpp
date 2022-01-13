@@ -3,9 +3,10 @@
 
 class PassManager {
     private:
-
+        bool* auth_flag;
     public:
-        
-}
+        PassManager(bool*);
+        void test();
+};
 
 #endif
