@@ -4,9 +4,9 @@ Simple Crypto++ based password manager
 Makefile coming soon
 
 Goals right now:
-1. Flesh out encryption and decryption classes
-3. Login system for users
-4. Interface manager class
+1. Login system for users
+2. Interface manager class
+3. Create a way to encrypt/decrypt data files
 
 More goals will come as development continues.
 
