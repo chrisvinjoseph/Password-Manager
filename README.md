@@ -9,7 +9,3 @@ Goals right now:
 3. Create a way to encrypt/decrypt data files
 
 More goals will come as development continues.
-
-Compile:
-g++ driver.cpp encryptor.cpp decryptor.cpp -lcrypto++
-
