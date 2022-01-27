@@ -13,6 +13,14 @@ class PassManager {
         int run();
         int login();
         int loginMenu();
+        int managerMenu();
+        // ALL FUNCS BELLOW NEED TO BE COMPLETED
+        int retrievePassword(std::string*);
+        int addPassword();
+        void addPassword();
+        void zeroStr(std::string*);
+        int copyToClipboard(std::string*);
+        void showHelpPasswordFound();
 };
 
 #endif

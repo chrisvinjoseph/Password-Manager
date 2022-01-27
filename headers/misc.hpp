@@ -1,6 +1,10 @@
 #ifndef MISC_H
 #define MISC_H
 
-void showSplash();
+class Misc {
+    public:
+        static void introText();
+        static void exitText();
+}
 
 #endif
