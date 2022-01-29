@@ -16,15 +16,21 @@
 
 using namespace CryptoPP;
 
-void Encryptor::getFormatInput() {
-    std::cout << "Enter key: " << std::endl;
-    std::cin >> keystr;
-    std::cout << "Enter text to be encrypted: " << std::endl;
+int Encryptor::getFormatInput() {
+    std::cout << "\nEnter your password: ";
     std::cin >> plaintext;
+    std::cout << "\nEnter your master key: ";
+    std::cin >> keystr;
+    std::cout << std::endl;
+
     keylength = keystr.size();
     plaintextsize = plaintext.size();
 
-    // Keystr resizing
+    // Keystr validation and resizing
+    if(keystr.size() == 0) {
+        return 0;
+    }
+
     if(keystr.size() < 16) {
         keystr.resize(16); // 128 bit key
     } else if(keystr.size() < 24) {
@@ -33,7 +39,7 @@ void Encryptor::getFormatInput() {
         keystr.resize(32); // 256 bit key
     } else {
         // Code for handling too long a key
-        std::cout << "Key is too long." << std::endl;
+        return 0;
     }
 
     // Using key.size instead of keylength var since key has been resized
@@ -44,27 +50,35 @@ void Encryptor::getFormatInput() {
 
     // Secure wipe keystr
     memset_z(&keystr[0], 0, keystr.size());
+
+    return 1;
 }
 
-void Encryptor::encrypt() {
+int Encryptor::encrypt() {
     try {
         EAX<AES>::Encryption e;
         e.SetKeyWithIV(*key, key->size(), *iv, iv->size());
         StringSource s(plaintext, true, new AuthenticatedEncryptionFilter(e, new StringSink(cipher)));
     } catch(const Exception& e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
+        return 0;
     }
     // Secure wipe plaintext
     memset_z(&plaintext[0], 0, plaintext.size());
+
+    return 1;
 }
 
 // Will store username along with iv-cipher as csv
-void Encryptor::store(std::string user, std::string location) {
+int Encryptor::store(std::string user, std::string target_loc_user, std::string location) {
     std::ofstream fout;
 
     fout.open("ciphers.txt", std::ios_base::app);
-    fout << user << "," << location << "," << plaintextsize << ",";
+    if(!fout) {
+        std::cout << "Could not open ciphers.txt." << std::endl;
+        return 0;
+    }
+
+    fout << user << "," << target_loc_user << "," << location << "," << plaintextsize << ",";
     HexEncoder encoder(new FileSink(fout));
     encoder.Put(*iv, iv->size());
     fout << ",";
@@ -74,6 +88,8 @@ void Encryptor::store(std::string user, std::string location) {
 
     delete key;
     delete iv;
+    plaintextsize = 0;
 
     fout.close();
+    return 1;
 }

@@ -1,9 +1,12 @@
 #include <iostream>
 #include <fstream>
 
+#include <crypto++/misc.h>
+
 #include "headers/pass_manager.hpp"
 #include "headers/hash.hpp"
 #include "headers/misc.hpp"
+#include "headers/decryptor.hpp"
 
 int PassManager::run() {
     Misc::introText();
@@ -41,7 +44,7 @@ int PassManager::login() {
             if(data == username) {
                 getline(usr_file, data, '\n');
                 if(data == password) {
-                    auth_username = username;
+                    auth_user_detail_list.auth_username = username;
                     usr_file.close();
                     return 1;
                 } else {
@@ -79,7 +82,7 @@ int PassManager::loginMenu() {
                 createAccount();
                 break;
             case 3:
-                showHelp();
+                showHelpLogin();
                 break;
             case 4:
                 return 0;
@@ -107,14 +110,14 @@ int PassManager::managerMenu() {
                         switch(selection) {
                             case 1:
                                 std::cout << "\nPassword: " << password << std::endl;
-                                zeroStr(&password);
+                                memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
                             case 2:
                                 std::cout << "Copying password to clipboard..." << std::endl;
                                 if(copyToClipboard(&password)) {
                                     std::cout << "Password successfully copied to clipboard." << std::endl;
-                                    zeroStr(&password);
+                                    memset_z(&password[0], 0, password.size());
                                     pass_found = false;
                                 } else {
                                     std::cout << "Password could not be copied to clipboard. For more information, try the 'Help' option." << std::endl;
@@ -125,7 +128,7 @@ int PassManager::managerMenu() {
                                 break;
                             case 4:
                                 std::cout << "Password retrieval cancelled.\n" << std::endl;
-                                zeroStr(&password);
+                                memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
                             default:
@@ -137,18 +140,67 @@ int PassManager::managerMenu() {
                 }
                 break;
             case 2:
-                // THIS FUNCTION IS A PLACEHOLDER.
-                // Proper logic needs to be added to support the add password functionality.
-                // addPassword() will return int based on password add success
-                addPassword();
+                if(addPassword()) {
+                    std::cout << "\n\nPassword was added successfully!" << std::endl;
+                } else {
+                    std::cout << "\nPassword could not be added. Try again." << std::endl;
+                }
                 break;
             case 3:
-                zeroStr(&auth_username);
+                memset_z(&auth_user_detail_list.auth_username[0], 0, auth_user_detail_list.auth_username.size());
                 return 1;
             case 4:
                 return 0;
             default:
                 std::cout << "Invalid choice. Try again." << std::endl;
         }
+    }
+}
+
+int PassManager::retrievePassword(std::string* password) {
+    std::string target_username, target_loc;
+    Decryptor decryptor;
+
+    decryptor.retrieveUser(&auth_user_detail_list.auth_username, &auth_user_detail_list.target_loc_username_list, &auth_user_detail_list.locations, &auth_user_detail_list.plaintextsizes, &auth_user_detail_list.IVs, &auth_user_detail_list.ciphers);
+
+    std::cout << "\n\nUsername for target location: ";
+    std::cin >> target_username;
+    std::cout << "\nTarget location: ";
+    std::cin >> target_loc;
+
+    for(int i = 0; i < (auth_user_detail_list.ciphers).size(); i++) {
+        if((auth_user_detail_list.target_loc_username_list[i] == target_username) && (auth_user_detail_list.location[i] == target_loc)) {
+            *password = decryptor.decrypt(&auth_user_detail_list.plaintextsizes[i], &auth_user_detail_list.IVs[i], &auth_user_detail_list.ciphers[i]);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int PassManager::addPassword() {
+    std::string target_username, target_loc;
+    Encryptor encryptor;
+
+    std::cout << "\n\nUsername for target location: ";
+    std::cin >> target_username;
+    std::cout << "\nTarget location: ";
+    std::cin >> target_loc;
+
+    if(encryptor.getFormatInput()) {
+        if(encryptor.encrypt()) {
+            if(encryptor.store(auth_user_detail_list.auth_username, target_username, target_loc)) {
+                return 1;
+            } else {
+                std::cout << "Password could not be stored." << std::endl;
+                return 0;
+            }
+        } else {
+            std::cout << "Encryption failed." << std::endl;
+            return 0;
+        }
+    } else {
+        std::cout << "\nInvalid key length. Key must be at least 1 character and less than 32 characters." << std::endl;
+        return 0;
     }
 }

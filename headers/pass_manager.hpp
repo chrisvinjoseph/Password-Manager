@@ -3,24 +3,25 @@
 
 #include <fstream>
 
+#include "misc.hpp"
+
 class PassManager {
     private:
         bool auth_flag = false;
-        std::string auth_username;
         ifstream usr_file;
         int selection;
+        Misc::User auth_user_detail_list;
     public:
         int run();
         int login();
         int loginMenu();
         int managerMenu();
-        // ALL FUNCS BELLOW NEED TO BE COMPLETED
         int retrievePassword(std::string*);
         int addPassword();
-        void addPassword();
-        void zeroStr(std::string*);
+        // ALL FUNCS BELOW NEED TO BE COMPLETED
         int copyToClipboard(std::string*);
         void showHelpPasswordFound();
+        void showHelpLogin();
 };
 
 #endif

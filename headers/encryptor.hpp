@@ -21,9 +21,9 @@ class Encryptor {
         CryptoPP::AutoSeededRandomPool prng;
 
     public:
-        void getFormatInput();
-        void encrypt();
-        void store(std::string user, std::string location);
+        int getFormatInput();
+        int encrypt();
+        int store(std::string, std::string, std::string);
 };
 
 #endif

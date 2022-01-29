@@ -17,13 +17,16 @@
 // Works in symmetry to encryptor. retrieve -> decrypt -> return plaintext
 using namespace CryptoPP;
 
-void Decryptor::retrieve(std::string* user, std::vector<std::string>* locations, std::vector<size_t>* plaintextsizes, std::vector<std::string>* IVs, std::vector<std::string>* ciphers) {
+// These parameters should be replaced by just a pointer to user struct from misc.hpp at some point
+void Decryptor::retrieveUser(std::string* user, std::vector<std::string>* target_loc_username_list, std::vector<std::string>* locations, std::vector<size_t>* plaintextsizes, std::vector<std::string>* IVs, std::vector<std::string>* ciphers) {
     std::ifstream fin("ciphers.txt");
     std::string data;
 
     if(fin) {
         while(getline(fin, data, ',')) {
             if(data == *user) {
+                getline(fin, data, ',');
+                target_loc_username_list->push_back(data);
                 getline(fin, data, ',');
                 locations->push_back(data);
                 getline(fin, data, ',');
