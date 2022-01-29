@@ -8,6 +8,10 @@
 #include "headers/misc.hpp"
 #include "headers/decryptor.hpp"
 
+// NOTE: User data should be retrieved via Decryptor::retrieveUser() upon logging in
+// and subsequently purged upon log out. This will prevent stray data from other users or duplicate data
+// from the same user.
+
 int PassManager::run() {
     Misc::introText();
 

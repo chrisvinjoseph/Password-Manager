@@ -6,6 +6,7 @@ class Misc {
         static void introText();
         static void exitText();
         // Definition of user
+        // NOTE: Add purge() function to clear vectors
         struct User {
             std::string auth_username;
             std::vector<std::string> target_loc_username_list;
