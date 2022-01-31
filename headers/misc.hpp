@@ -1,6 +1,8 @@
 #ifndef MISC_H
 #define MISC_H
 
+#include <vector>
+
 class Misc {
     public:
         static void introText();
@@ -14,7 +16,7 @@ class Misc {
             std::vector<size_t> plaintextsizes;
             std::vector<std::string> IVs;
             std::vector<std::string> ciphers;
-        }
-}
+        };
+};
 
 #endif

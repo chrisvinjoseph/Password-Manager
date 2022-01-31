@@ -4,10 +4,10 @@
 
 using namespace std;
 
-static void Misc::introText() {
-    cout << "\n\n*************\nWelcome\n*************\n\n" << endl;
+void Misc::introText() {
+    cout << "\n\n***********************\n\tWelcome\n***********************" << endl;
 }
 
-static void Misc::exitText() {
-    cout << "Thank you for using my password manager.\n\Exiting...\n\n" << endl;
+void Misc::exitText() {
+    cout << "Thank you for using my password manager.\nExiting...\n\n" << endl;
 }

@@ -8,7 +8,7 @@
 class PassManager {
     private:
         bool auth_flag = false;
-        ifstream usr_file;
+        std::ifstream usr_file;
         int selection;
         Misc::User auth_user_detail_list;
     public:
@@ -19,9 +19,11 @@ class PassManager {
         int retrievePassword(std::string*);
         int addPassword();
         // ALL FUNCS BELOW NEED TO BE COMPLETED
+        int createAccount(std::string*, std::string*);
         int copyToClipboard(std::string*);
         void showHelpPasswordFound();
         void showHelpLogin();
+        // deleteAccount needs to be made
 };
 
 #endif

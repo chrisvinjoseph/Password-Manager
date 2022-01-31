@@ -3,10 +3,11 @@
 
 #include <crypto++/misc.h>
 
+#include "headers/decryptor.hpp"
+#include "headers/encryptor.hpp"
 #include "headers/pass_manager.hpp"
 #include "headers/hash.hpp"
 #include "headers/misc.hpp"
-#include "headers/decryptor.hpp"
 
 // NOTE: User data should be retrieved via Decryptor::retrieveUser() upon logging in
 // and subsequently purged upon log out. This will prevent stray data from other users or duplicate data
@@ -70,8 +71,10 @@ int PassManager::login() {
 }
 
 int PassManager::loginMenu() {
+    std::string username, pass, pass_conf;
+
     while(true) {
-        std::cout << "\n\n1. Log in\n2. Create an account\n3. Help\n4. Quit\nSelect an option: " << std::endl;
+        std::cout << "\n\t- Login Menu -\n1. Log in\n2. Create an account\n3. Help\n4. Quit\nSelect an option: ";
         std::cin >> selection;
         switch(selection) {
             case 1:
@@ -79,11 +82,24 @@ int PassManager::loginMenu() {
                     std::cout << "\nLogin successful!\n\n" << std::endl;
                     return 1;
                 } else {
-                    std::cout << "Login failed. Try again.\n\n"
+                    std::cout << "Login failed. Try again.\n\n";
                 }
                 break;
             case 2:
-                createAccount();
+                std::cout << "\t- Create account -" << std::endl;
+                std::cout << "Enter a username: ";
+                std::cin >> username;
+                std::cout << "Enter a password: ";
+                std::cin >> pass;
+                std::cout << "Confirm password: ";
+                std::cin >> pass_conf;
+                if(pass == pass_conf) {
+                    if(createAccount(&username, &pass)) {
+                        std::cout << "Account created!" << std::endl;
+                    } else {
+                        std::cout << "Failed to create account." << std::endl;
+                    }
+                }
                 break;
             case 3:
                 showHelpLogin();
@@ -102,7 +118,7 @@ int PassManager::managerMenu() {
         std::cout << "\n\n1. Retrieve password\n2. Add password\n3. Log Out\n4. Exit\nSelect an option: " << std::endl;
         std::cin >> selection;
         switch(selection) {
-            case 1:
+            case 1: {
                 std::string password;
                 bool pass_found;
                 if(retrievePassword(&password)) {
@@ -112,51 +128,65 @@ int PassManager::managerMenu() {
                         std::cout << "1. Display plain text password to terminal\n2. Copy password to clipboard\n3. Help\n4. Cancel\nSelect an option: " << std::endl;
                         std::cin >> selection;
                         switch(selection) {
-                            case 1:
+                            case 1: {
                                 std::cout << "\nPassword: " << password << std::endl;
-                                memset_z(&password[0], 0, password.size());
+                                CryptoPP::memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
-                            case 2:
-                                std::cout << "Copying password to clipboard..." << std::endl;
-                                if(copyToClipboard(&password)) {
-                                    std::cout << "Password successfully copied to clipboard." << std::endl;
-                                    memset_z(&password[0], 0, password.size());
-                                    pass_found = false;
-                                } else {
-                                    std::cout << "Password could not be copied to clipboard. For more information, try the 'Help' option." << std::endl;
-                                }
+                            }
+                            case 2: {
+                                // std::cout << "Copying password to clipboard..." << std::endl;
+                                // if(copyToClipboard(&password)) {
+                                //     std::cout << "Password successfully copied to clipboard." << std::endl;
+                                //     memset_z(&password[0], 0, password.size());
+                                //     pass_found = false;
+                                // } else {
+                                //     std::cout << "Password could not be copied to clipboard. For more information, try the 'Help' option." << std::endl;
+                                // }
+
+                                std::cout << "NO COPY FUNCTIONALITY" << std::endl;
+                                CryptoPP::memset_z(&password[0], 0, password.size());
+                                pass_found = false;
                                 break;
-                            case 3:
+                            }
+                            case 3: {
                                 showHelpPasswordFound();
                                 break;
-                            case 4:
+                            }
+                            case 4: {
                                 std::cout << "Password retrieval cancelled.\n" << std::endl;
-                                memset_z(&password[0], 0, password.size());
+                                CryptoPP::memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
-                            default:
+                            }
+                            default: {
                                 std::cout << "Invalid choice. Try again." << std::endl;
+                            }
                         }
                     }
                 } else {
                     std::cout << "A password could not be found for the credentials provided. Try again..." << std::endl;
                 }
                 break;
-            case 2:
+            }
+            case 2: {
                 if(addPassword()) {
                     std::cout << "\n\nPassword was added successfully!" << std::endl;
                 } else {
                     std::cout << "\nPassword could not be added. Try again." << std::endl;
                 }
                 break;
-            case 3:
-                memset_z(&auth_user_detail_list.auth_username[0], 0, auth_user_detail_list.auth_username.size());
+            }
+            case 3: {
+                CryptoPP::memset_z(&auth_user_detail_list.auth_username[0], 0, auth_user_detail_list.auth_username.size());
                 return 1;
-            case 4:
+            }
+            case 4: {
                 return 0;
-            default:
+            }
+            default: {
                 std::cout << "Invalid choice. Try again." << std::endl;
+            }
         }
     }
 }
@@ -173,7 +203,7 @@ int PassManager::retrievePassword(std::string* password) {
     std::cin >> target_loc;
 
     for(int i = 0; i < (auth_user_detail_list.ciphers).size(); i++) {
-        if((auth_user_detail_list.target_loc_username_list[i] == target_username) && (auth_user_detail_list.location[i] == target_loc)) {
+        if((auth_user_detail_list.target_loc_username_list[i] == target_username) && (auth_user_detail_list.locations[i] == target_loc)) {
             *password = decryptor.decrypt(&auth_user_detail_list.plaintextsizes[i], &auth_user_detail_list.IVs[i], &auth_user_detail_list.ciphers[i]);
             return 1;
         }
@@ -207,4 +237,27 @@ int PassManager::addPassword() {
         std::cout << "\nInvalid key length. Key must be at least 1 character and less than 32 characters." << std::endl;
         return 0;
     }
+}
+
+int PassManager::createAccount(std::string* username, std::string* password) {
+    std::ofstream fout;
+    *password = Hash::hash(password);
+
+    fout.open("users.txt", std::ios_base::app);
+    if(!fout) {
+        std::cout << "Could not open users.txt." << std::endl;
+        return 0;
+    }
+
+    fout << *username << "," << *password << "\n";
+
+    return 1;
+}
+
+void PassManager::showHelpLogin() {
+    std::cout << "HELP LOGIN" << std::endl;
+}
+
+void PassManager::showHelpPasswordFound() {
+    std::cout << "HELP PASS FOUND" << std::endl;
 }

@@ -8,8 +8,8 @@
 
 using namespace CryptoPP;
 
-// NEED TO ADD SALTING 
-static std::string Hash::hash(std::string* input) {
+// NEED TO ADD SALTING
+std::string Hash::hash(std::string* input) {
     std::string digest, output;
     HexEncoder encoder(new StringSink(output));
 
