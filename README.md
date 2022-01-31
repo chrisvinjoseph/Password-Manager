@@ -1,10 +1,8 @@
 # Password-Manager
 Simple Crypto++ based password manager
 
-Makefile coming soon
-
 Goals right now:
-1. Add a feature to copy retrieved password to clipboard
-2. Finish basic functionality and begin testing/bug fixing
-
-More goals will come as development continues.
+1. Fix bugs and clean up interface
+2. Clean up some of the messier classes
+3. Add a feature to copy retrieved password to clipboard 
+(Although this may not happen since linux uses X11, for which the clipboard is significantly harder to manipulate than Windows/MacOS)
