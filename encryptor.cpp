@@ -17,9 +17,9 @@
 using namespace CryptoPP;
 
 int Encryptor::getFormatInput() {
-    std::cout << "\nEnter your password: ";
+    std::cout << "Enter your password: ";
     std::cin >> plaintext;
-    std::cout << "\nEnter your master key: ";
+    std::cout << "Enter your master key: ";
     std::cin >> keystr;
     std::cout << std::endl;
 

@@ -37,14 +37,14 @@ int PassManager::login() {
     // Must return 1 if login successful
     std::string username, password, data;
 
-    std::cout << "\n\tUsername: ";
-    std::cin >> username;
-    std::cout << "\n\tMaster Password: ";
-    std::cin >> password;
-    password = Hash::hash(&password);
-
     usr_file.open("users.txt");
     if(usr_file) {
+        std::cout << "\n\t- Login -" << std::endl;
+        std::cout << "\nUsername: ";
+        std::cin >> username;
+        std::cout << "Master Password: ";
+        std::cin >> password;
+        password = Hash::hash(&password);
         while(getline(usr_file, data, ',')) {
             if(data == username) {
                 getline(usr_file, data, '\n');
@@ -54,18 +54,19 @@ int PassManager::login() {
                     return 1;
                 } else {
                     usr_file.close();
-                    std::cout << "Incorrect password." << std::endl;
+                    std::cout << "\n\tIncorrect password." << std::endl;
+                    std::cout << "\tLogin failed. Try again." << std::endl;
                     return 0;
                 }
             } else {
                 getline(usr_file, data, '\n');
             }
         }
-        std::cout << "User not found. Try again." << std::endl;
+        std::cout << "\n\tUser not found. Try again." << std::endl;
         usr_file.close();
         return 0;
     } else {
-        std::cout << "No users exist. Please create an account." << std::endl;
+        std::cout << "\n\tNo users exist. Please create an account." << std::endl;
         return 0;
     }
 }
@@ -74,19 +75,17 @@ int PassManager::loginMenu() {
     std::string username, pass, pass_conf;
 
     while(true) {
-        std::cout << "\n\t- Login Menu -\n1. Log in\n2. Create an account\n3. Help\n4. Quit\nSelect an option: ";
+        std::cout << "\n\t- Login Menu -\n\n1. Log in\n2. Create an account\n3. Help\n4. Quit\nSelect an option: ";
         std::cin >> selection;
         switch(selection) {
             case 1:
                 if(login()) {
-                    std::cout << "\nLogin successful!\n\n" << std::endl;
+                    std::cout << "\n\tLogin successful!" << std::endl;
                     return 1;
-                } else {
-                    std::cout << "Login failed. Try again.\n\n";
                 }
                 break;
             case 2:
-                std::cout << "\t- Create account -" << std::endl;
+                std::cout << "\n\t- Create account -" << std::endl;
                 std::cout << "Enter a username: ";
                 std::cin >> username;
                 std::cout << "Enter a password: ";
@@ -95,9 +94,9 @@ int PassManager::loginMenu() {
                 std::cin >> pass_conf;
                 if(pass == pass_conf) {
                     if(createAccount(&username, &pass)) {
-                        std::cout << "Account created!" << std::endl;
+                        std::cout << "\n\tAccount created!" << std::endl;
                     } else {
-                        std::cout << "Failed to create account." << std::endl;
+                        std::cout << "\n\tFailed to create account." << std::endl;
                     }
                 }
                 break;
@@ -107,7 +106,7 @@ int PassManager::loginMenu() {
             case 4:
                 return 0;
             default:
-                std::cout << "Invalid choice. Try again." << std::endl;
+                std::cout << "\n\tInvalid choice. Try again." << std::endl;
         }
     }
 }
@@ -115,7 +114,8 @@ int PassManager::loginMenu() {
 int PassManager::managerMenu() {
     // Returns 1 for log out or 0 for exit
     while(true) {
-        std::cout << "\n\n1. Retrieve password\n2. Add password\n3. Log Out\n4. Exit\nSelect an option: " << std::endl;
+        std::cout << "\n\t- Password Manager -" << std::endl;
+        std::cout << "\n1. Retrieve password\n2. Add password\n3. Log Out\n4. Exit\nSelect an option: ";
         std::cin >> selection;
         switch(selection) {
             case 1: {
@@ -124,7 +124,7 @@ int PassManager::managerMenu() {
                 if(retrievePassword(&password)) {
                     pass_found = true;
                     while(pass_found) {
-                        std::cout << "Password found. \n\t- Please choose from the following -\n" << std::endl;
+                        std::cout << "\n\tPassword found. \n\t- Please choose from the following -\n" << std::endl;
                         std::cout << "1. Display plain text password to terminal\n2. Copy password to clipboard\n3. Help\n4. Cancel\nSelect an option: " << std::endl;
                         std::cin >> selection;
                         switch(selection) {
@@ -144,7 +144,7 @@ int PassManager::managerMenu() {
                                 //     std::cout << "Password could not be copied to clipboard. For more information, try the 'Help' option." << std::endl;
                                 // }
 
-                                std::cout << "NO COPY FUNCTIONALITY" << std::endl;
+                                std::cout << "\n\tNO COPY FUNCTIONALITY YET" << std::endl;
                                 CryptoPP::memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
@@ -154,26 +154,26 @@ int PassManager::managerMenu() {
                                 break;
                             }
                             case 4: {
-                                std::cout << "Password retrieval cancelled.\n" << std::endl;
+                                std::cout << "\n\tPassword retrieval cancelled.\n" << std::endl;
                                 CryptoPP::memset_z(&password[0], 0, password.size());
                                 pass_found = false;
                                 break;
                             }
                             default: {
-                                std::cout << "Invalid choice. Try again." << std::endl;
+                                std::cout << "\n\tInvalid choice. Try again." << std::endl;
                             }
                         }
                     }
                 } else {
-                    std::cout << "A password could not be found for the credentials provided. Try again..." << std::endl;
+                    std::cout << "\tA password could not be found for the credentials provided. Try again..." << std::endl;
                 }
                 break;
             }
             case 2: {
                 if(addPassword()) {
-                    std::cout << "\n\nPassword was added successfully!" << std::endl;
+                    std::cout << "\n\tPassword was added successfully!" << std::endl;
                 } else {
-                    std::cout << "\nPassword could not be added. Try again." << std::endl;
+                    std::cout << "\n\tPassword could not be added. Try again." << std::endl;
                 }
                 break;
             }
@@ -185,7 +185,7 @@ int PassManager::managerMenu() {
                 return 0;
             }
             default: {
-                std::cout << "Invalid choice. Try again." << std::endl;
+                std::cout << "\n\tInvalid choice. Try again." << std::endl;
             }
         }
     }
@@ -195,18 +195,21 @@ int PassManager::retrievePassword(std::string* password) {
     std::string target_username, target_loc;
     Decryptor decryptor;
 
-    decryptor.retrieveUser(&auth_user_detail_list.auth_username, &auth_user_detail_list.target_loc_username_list, &auth_user_detail_list.locations, &auth_user_detail_list.plaintextsizes, &auth_user_detail_list.IVs, &auth_user_detail_list.ciphers);
+    if(decryptor.retrieveUser(&auth_user_detail_list.auth_username, &auth_user_detail_list.target_loc_username_list, &auth_user_detail_list.locations, &auth_user_detail_list.plaintextsizes, &auth_user_detail_list.IVs, &auth_user_detail_list.ciphers)) {
+        std::cout << "\n\t- Retrieve Password -" << std::endl;
+        std::cout << "\nUsername for target location: ";
+        std::cin >> target_username;
+        std::cout << "Target location: ";
+        std::cin >> target_loc;
 
-    std::cout << "\n\nUsername for target location: ";
-    std::cin >> target_username;
-    std::cout << "\nTarget location: ";
-    std::cin >> target_loc;
-
-    for(int i = 0; i < (auth_user_detail_list.ciphers).size(); i++) {
-        if((auth_user_detail_list.target_loc_username_list[i] == target_username) && (auth_user_detail_list.locations[i] == target_loc)) {
-            *password = decryptor.decrypt(&auth_user_detail_list.plaintextsizes[i], &auth_user_detail_list.IVs[i], &auth_user_detail_list.ciphers[i]);
-            return 1;
+        for(int i = 0; i < (auth_user_detail_list.ciphers).size(); i++) {
+            if((auth_user_detail_list.target_loc_username_list[i] == target_username) && (auth_user_detail_list.locations[i] == target_loc)) {
+                *password = decryptor.decrypt(&auth_user_detail_list.plaintextsizes[i], &auth_user_detail_list.IVs[i], &auth_user_detail_list.ciphers[i]);
+                return 1;
+            }
         }
+    } else {
+        std::cout << "\n\tNo account file exists. Create an account first." << std::endl;
     }
 
     return 0;
@@ -216,9 +219,10 @@ int PassManager::addPassword() {
     std::string target_username, target_loc;
     Encryptor encryptor;
 
-    std::cout << "\n\nUsername for target location: ";
+    std::cout << "\n\t- Add Password -" << std::endl;
+    std::cout << "\nUsername for target location: ";
     std::cin >> target_username;
-    std::cout << "\nTarget location: ";
+    std::cout << "Target location: ";
     std::cin >> target_loc;
 
     if(encryptor.getFormatInput()) {
@@ -226,15 +230,15 @@ int PassManager::addPassword() {
             if(encryptor.store(auth_user_detail_list.auth_username, target_username, target_loc)) {
                 return 1;
             } else {
-                std::cout << "Password could not be stored." << std::endl;
+                std::cout << "\n\tPassword could not be stored." << std::endl;
                 return 0;
             }
         } else {
-            std::cout << "Encryption failed." << std::endl;
+            std::cout << "\n\tEncryption failed." << std::endl;
             return 0;
         }
     } else {
-        std::cout << "\nInvalid key length. Key must be at least 1 character and less than 32 characters." << std::endl;
+        std::cout << "\n\tInvalid key length. Key must be at least 1 character and less than 32 characters." << std::endl;
         return 0;
     }
 }
@@ -245,7 +249,7 @@ int PassManager::createAccount(std::string* username, std::string* password) {
 
     fout.open("users.txt", std::ios_base::app);
     if(!fout) {
-        std::cout << "Could not open users.txt." << std::endl;
+        std::cout << "\n\tCould not open users.txt." << std::endl;
         return 0;
     }
 

@@ -18,7 +18,7 @@
 using namespace CryptoPP;
 
 // These parameters should be replaced by just a pointer to user struct from misc.hpp at some point
-void Decryptor::retrieveUser(std::string* user, std::vector<std::string>* target_loc_username_list, std::vector<std::string>* locations, std::vector<size_t>* plaintextsizes, std::vector<std::string>* IVs, std::vector<std::string>* ciphers) {
+int Decryptor::retrieveUser(std::string* user, std::vector<std::string>* target_loc_username_list, std::vector<std::string>* locations, std::vector<size_t>* plaintextsizes, std::vector<std::string>* IVs, std::vector<std::string>* ciphers) {
     std::ifstream fin("ciphers.txt");
     std::string data;
 
@@ -42,14 +42,16 @@ void Decryptor::retrieveUser(std::string* user, std::vector<std::string>* target
             }
         }
     } else {
-        std::cout << "File not working." << std::endl;
+        memset_z(&data[0], 0, data.size());
+
+        fin.close();
+        return 0;
     }
 
-    for(int i = 0; i < data.size(); i++) {
-        data[i] = ' ';
-    }
+    memset_z(&data[0], 0, data.size());
 
     fin.close();
+    return 1;
 }
 
 std::string Decryptor::decrypt(std::size_t* plaintextsize, std::string* ivstr, std::string* cipherstr) {

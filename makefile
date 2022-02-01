@@ -21,3 +21,6 @@ pass_manager.o: pass_manager.cpp headers/pass_manager.hpp
 
 clean:
 	rm *.o passmanager
+	
+reset:
+	rm -f *.o passmanager ciphers.txt users.txt
